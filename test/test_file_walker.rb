@@ -4,10 +4,8 @@ require 'minitest/autorun'
 require_relative '../src/file_walker'
 
 class TestFileWalker < MiniTest::Test
-
   def test_read_current_dir
     file_walker = FileWalker.new('./test/data')
-    puts file_walker.structure
 
     assert_equal 2, file_walker.structure.size,
                  "At the root there\'s only two items, but got #{file_walker.structure.size}"
@@ -27,5 +25,29 @@ class TestFileWalker < MiniTest::Test
     assert_equal 3, file_walker.structure['data_1'].size,
                  "Expected that data_1 directory to contain 3 items,
                   but got #{file_walker.structure['data_1'].size}"
+  end
+
+  def test_each
+    count = 0
+    paths_encountered = []
+    files_encountered = []
+
+    file_walker = FileWalker.new('./test/data')
+    file_walker.each do |path, file|
+      paths_encountered << path
+      files_encountered << file
+      count += 1
+    end
+
+    assert_equal 4, count, 'Expected each to go through 4 files'
+
+    assert_includes paths_encountered, './test/data/test.txt'
+    assert_includes paths_encountered, './test/data/data_1/test.txt'
+    assert_includes paths_encountered, './test/data/data_1/test2.txt'
+    assert_includes paths_encountered, './test/data/data_1/data_2/text_1.txt'
+
+    assert_includes files_encountered, 'test.txt'
+    assert_includes files_encountered, 'test2.txt'
+    assert_includes files_encountered, 'text_1.txt'
   end
 end
