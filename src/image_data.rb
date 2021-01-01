@@ -20,4 +20,14 @@ class ImageData
     @date_taken = timestamp_taken.to_datetime.to_date
   end
 
+  def date?
+    !@timestamp_taken.nil?
+  end
+
+  def to_a
+    [@full_path,
+     @file_name,
+     @timestamp_taken.strftime('%F %T'),
+     @date_taken.strftime('%F')]
+  end
 end
