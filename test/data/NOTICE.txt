@@ -1,0 +1,2 @@
+Important note about these 'image'. They are in fact just text files.
+The tests that use these files only care about the name and extention
