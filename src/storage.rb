@@ -41,7 +41,7 @@ class Storage
     commit_if_necessary
   end
 
-  def grouped_by_date
+  def fetch_grouped_by_date
     data_a = []
     rs = @db.query 'select date_taken, count(date_taken) as count from photos group by date_taken order by date_taken asc'
     rs.each { |result| data_a << result }
@@ -52,6 +52,18 @@ class Storage
   def get_by_path_as_hash(path)
     commit_if_has_transaction
     @db.get_first_row 'select * from photos where full_path = ?', path
+  end
+
+  def fetch_start_year
+    @db.get_first_value 'select cast(strftime(\'%Y\', min(date_taken)) as int) as YEAR from photos;'
+  end
+
+  def fetch_end_year
+    @db.get_first_value 'select cast(strftime(\'%Y\', max(date_taken)) as int) as YEAR from photos;'
+  end
+
+  def close
+    @db.close
   end
 
   private

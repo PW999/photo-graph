@@ -44,10 +44,30 @@ class TestStorage < MiniTest::Test
 
     data.each { |image| @storage.store image }
 
-    statistics = @storage.grouped_by_date
+    statistics = @storage.fetch_grouped_by_date
     assert_equal 3, find_stat_by_date(statistics, '2021-01-01')['count']
     assert_equal 1, find_stat_by_date(statistics, '2020-01-01')['count']
     assert_equal 1, find_stat_by_date(statistics, '2019-01-01')['count']
+  end
+
+  def test_min_max_year
+    data = [
+      ImageData.new('/home/test/image_1.jpg', 'image_1.jpg',
+                    get_exif_mock(Time.new(1971, 1, 1, 17, 53, 12), '', '')),
+      ImageData.new('/home/test/image_2.jpg', 'image_2.jpg',
+                    get_exif_mock(Time.new(3001, 1, 1, 17, 53, 12), '', '')),
+      ImageData.new('/home/test/image_3.jpg', 'image_3.jpg',
+                    get_exif_mock(Time.new(2019, 1, 1, 17, 53, 12), '', '')),
+      ImageData.new('/home/test/image_4.jpg', 'image_4.jpg',
+                    get_exif_mock(Time.new(2021, 1, 1, 15, 53, 12), '', '')),
+      ImageData.new('/home/test/image_5.jpg', 'image_5.jpg',
+                    get_exif_mock(Time.new(2021, 1, 1, 16, 53, 12), '', ''))
+    ]
+
+    data.each { |image| @storage.store image }
+
+    assert_equal @storage.fetch_start_year, 1971
+    assert_equal @storage.fetch_end_year, 3001
   end
 
   private

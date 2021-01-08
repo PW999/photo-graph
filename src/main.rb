@@ -31,4 +31,5 @@ paths.each do |path|
     end
   end
 end
-pp storage.grouped_by_date
+pp storage.fetch_grouped_by_date
+store.close
