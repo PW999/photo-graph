@@ -3,21 +3,24 @@
 require 'time'
 
 class ImageData
-
-  attr_reader :full_path, :file_name, :timestamp_taken, :date_taken
+  attr_reader :full_path, :file_name, :timestamp_taken, :date_taken, :make, :model
 
   @full_path
   @file_name
   @timestamp_taken
   @date_taken
+  @make
+  @model
 
-  def initialize(full_path, file_name, timestamp_taken)
+  def initialize(full_path, file_name, exif)
     @full_path = full_path
     @file_name = file_name
-    return if timestamp_taken.nil?
+    return if exif.nil? || exif.date_time_original.nil?
 
-    @timestamp_taken = timestamp_taken
-    @date_taken = timestamp_taken.to_datetime.to_date
+    @make = exif.make
+    @model = exif.model
+    @timestamp_taken = exif.date_time_original
+    @date_taken = exif.date_time_original.to_datetime.to_date
   end
 
   def date?
@@ -28,6 +31,8 @@ class ImageData
     [@full_path,
      @file_name,
      @timestamp_taken.strftime('%F %T'),
-     @date_taken.strftime('%F')]
+     @date_taken.strftime('%F'),
+     @make,
+     @model]
   end
 end
